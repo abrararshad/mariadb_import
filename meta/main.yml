@@ -1,0 +1,25 @@
+galaxy_info:
+  author: Abrar Arshad
+  description: Archive and import maraidb database to the remote machine
+  license: "license (BSD, MIT)"
+  min_ansible_version: "2.1"
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  galaxy_tags:
+    - maraidb
+    - mysql
+    - import
+    - system
+    - web
+    - development
+    - tool
+
+dependencies: []

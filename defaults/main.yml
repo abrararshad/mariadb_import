@@ -1,0 +1,6 @@
+---
+mariadb_import_dump_file_path: ''
+mariadb_import_remote_dump_folder: '/tmp/dumps'
+mariadb_import_database: ''
+mariadb_import_user: ''
+mariadb_import_password: ''

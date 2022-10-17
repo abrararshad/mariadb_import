@@ -1,0 +1,41 @@
+---
+- name: Generate Filename
+  delegate_to: localhost
+  become: false     
+  ansible.builtin.set_fact:
+    zip_filename: "{{ ansible_date_time.iso8601 }}"
+- set_fact:
+    folder_path: "{{ mariadb_import_dump_file_path | dirname }}"
+- debug:
+    msg: "{{ folder_path }}"
+- name: Archive DB
+  delegate_to: localhost
+  become: false     
+  archive:
+    path: "{{ mariadb_import_dump_file_path }}"
+    dest: "{{ folder_path }}/{{ zip_filename }}.zip"
+    format: zip
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - "{{ mariadb_import_remote_dump_folder }}/archive"
+    - "{{ mariadb_import_remote_dump_folder }}/raw"
+- name: Copy database dump file
+  copy:
+    src: "{{ folder_path }}/{{ zip_filename }}.zip"
+    dest: "{{ mariadb_import_remote_dump_folder }}/archive"
+- name: Extract {{ mariadb_import_remote_dump_folder }}/archive/{{ zip_filename }}.zip into {{ mariadb_import_remote_dump_folder }}/raw
+  ansible.builtin.unarchive:
+    src: "{{ mariadb_import_remote_dump_folder }}/archive/{{ zip_filename }}.zip"
+    dest: "{{ mariadb_import_remote_dump_folder }}/raw"
+    remote_src: yes        
+- name: Restore database {{ mariadb_import_dump_file_path | basename }}
+  mysql_db:
+    name: "{{ mariadb_import_database }}"
+    state: import
+    target: "{{ mariadb_import_remote_dump_folder }}/raw/{{ mariadb_import_dump_file_path | basename }}"
+    login_user: "{{ mariadb_import_user }}"
+    login_password: "{{ mariadb_import_password }}"
