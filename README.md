@@ -28,7 +28,7 @@ Example
 
 ```
 ---
-- name: 'MariaDB psuh'
+- name: 'MariaDB push'
   hosts: "all"
   roles:
     - name: abrararshad.mariadb_import
